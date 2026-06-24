@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase-client";
 import { interpretScore, scoreLabel } from "@/lib/scoring";
@@ -12,7 +12,7 @@ interface DiagnosticResult {
   weak_areas: string[];
 }
 
-export default function ResultsPage() {
+function ResultsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const diagnosticId = searchParams.get("id");
@@ -112,5 +112,19 @@ export default function ResultsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-techy-muted">Loading your results...</div>
+        </div>
+      }
+    >
+      <ResultsContent />
+    </Suspense>
   );
 }
