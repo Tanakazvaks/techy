@@ -70,7 +70,7 @@ export default function Home() {
               href="/diagnostic"
               className="inline-block px-8 py-4 bg-techy-accent hover:bg-techy-accentHover text-white text-lg font-medium rounded-md transition shadow-glow"
             >
-              Take the diagnostic — it&apos;s free
+              Take the diagnostic. It&apos;s free
             </Link>
             <p className="text-sm text-techy-muted mt-4">
               15 questions, ~15 minutes. No signup until you want to see your score.
@@ -79,7 +79,7 @@ export default function Home() {
 
           {/* Stacked question card preview */}
           <div className="md:col-span-2 relative h-[340px]">
-            {/* Card 3 — back */}
+            {/* Card 3 back */}
             <div className="absolute top-0 right-0 w-full bg-techy-surface border border-techy-border rounded-lg p-4 opacity-50 transform rotate-2 translate-x-4">
               <div className="flex gap-2 items-center mb-2">
                 <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-topic-splunk text-topic-splunkText">
@@ -93,7 +93,7 @@ export default function Home() {
                 Write a basic Splunk search for failed Windows logins...
               </div>
             </div>
-            {/* Card 2 — middle */}
+            {/* Card 2 middle */}
             <div className="absolute top-12 right-0 w-full bg-techy-surface border border-techy-border rounded-lg p-4 opacity-75 transform -rotate-1 translate-x-2">
               <div className="flex gap-2 items-center mb-2">
                 <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-topic-common_attacks text-topic-common_attacksText">
@@ -107,7 +107,7 @@ export default function Home() {
                 You see a phishing email reach 200 users. Walk me through...
               </div>
             </div>
-            {/* Card 1 — front, full content */}
+            {/* Card 1 front, full content */}
             <div className="absolute top-24 right-0 w-full bg-techy-surface border border-techy-border rounded-lg p-5 shadow-glow">
               <div className="flex gap-2 items-center flex-wrap mb-3">
                 <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-topic-networking text-topic-networkingText">
@@ -139,7 +139,7 @@ export default function Home() {
             </div>
             <h3 className="font-semibold mb-2 text-lg">Real interview scenarios</h3>
             <p className="text-techy-muted text-sm">
-              Scenario questions modeled on what actual SOC interviewers ask — brute force investigation, phishing triage, lateral movement, ransomware.
+              Scenario questions modeled on what actual SOC interviewers ask: brute force investigation, phishing triage, lateral movement, ransomware.
             </p>
           </div>
           <div className="bg-techy-surface border border-techy-border rounded-lg p-6 hover:border-techy-accent transition">
@@ -148,7 +148,7 @@ export default function Home() {
             </div>
             <h3 className="font-semibold mb-2 text-lg">Senior-analyst feedback</h3>
             <p className="text-techy-muted text-sm">
-              Sharp, specific feedback on every answer. Not &ldquo;great job&rdquo; — actually useful critique that points to what to fix.
+              Sharp, specific feedback on every answer. Not &ldquo;great job&rdquo;. Actually useful critique that points to what to fix.
             </p>
           </div>
           <div className="bg-techy-surface border border-techy-border rounded-lg p-6 hover:border-techy-accent transition">
@@ -162,12 +162,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Question bank preview — all 11 topics */}
+        {/* Question bank preview all 11 topics */}
         <section className="max-w-5xl mx-auto px-6 py-16">
           <div className="bg-gradient-to-br from-techy-surface via-techy-surface to-techy-accent/5 border border-techy-border rounded-2xl p-10 text-center">
             <h2 className="text-3xl font-bold mb-2 tracking-tight">157 questions across 11 SOC topics</h2>
             <p className="text-techy-muted text-sm mb-8 max-w-xl mx-auto">
-              Conceptual, scenario, tools, and behavioral questions — filterable by topic and difficulty in the question library.
+              Conceptual, scenario, tools, and behavioral questions. Filterable by topic and difficulty in the question library.
             </p>
             <div className="flex flex-wrap gap-2 justify-center mb-8">
               {ALL_TOPICS.map((t) => (
@@ -196,7 +196,7 @@ export default function Home() {
         <section className="max-w-3xl mx-auto px-6 py-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Ready to start?</h2>
           <p className="text-techy-muted text-lg mb-8">
-            Take the diagnostic first — see where you stand, then build a plan from there.
+            Take the diagnostic first to see where you stand, then build a plan from there.
           </p>
           <Link
             href="/diagnostic"
