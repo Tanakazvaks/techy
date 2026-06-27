@@ -74,9 +74,10 @@ export default function LibraryPage() {
 
         <div className="space-y-2">
           {filtered.map((q) => (
-            <div
+            <Link
               key={q.id}
-              className="bg-techy-surface border border-techy-border rounded-md p-4 hover:border-techy-accent transition"
+              href={`/practice/${q.id}`}
+              className="block bg-techy-surface border border-techy-border rounded-md p-4 hover:border-techy-accent transition cursor-pointer"
             >
               <div className="flex gap-2 mb-2 items-center text-xs">
                 <span className="bg-techy-bg border border-techy-border rounded-full px-2 py-0.5">
@@ -89,7 +90,7 @@ export default function LibraryPage() {
                 <span className="text-techy-muted ml-auto">{q.id}</span>
               </div>
               <div className="text-sm">{q.question_text}</div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>
