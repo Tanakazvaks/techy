@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { buildMockInterviewSet, Question } from "@/lib/questions";
+import Logo from "@/components/Logo";
 
 type Stage = "intro" | "interview" | "generating_report" | "report";
 
@@ -59,7 +60,6 @@ export default function MockInterviewPage() {
     setAnswers(updated);
 
     if (currentIndex === questions.length - 1) {
-      // Generate report
       setStage("generating_report");
       try {
         const durationSec = Math.round((Date.now() - startTime) / 1000);
@@ -88,39 +88,51 @@ export default function MockInterviewPage() {
     }
   }
 
+  const PageHeader = ({ subtitle }: { subtitle: string }) => (
+    <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <Link href="/"><Logo /></Link>
+        <div className="text-techy-muted uppercase text-xs tracking-wider">{subtitle}</div>
+      </div>
+    </header>
+  );
+
   if (stage === "intro") {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-2xl w-full">
-          <h1 className="text-3xl font-bold mb-3">Mock interview</h1>
-          <p className="text-techy-muted mb-6">
-            This is a simulated SOC analyst interview. Set aside about 30 minutes of focused time.
-          </p>
+      <div className="min-h-screen flex flex-col">
+        <PageHeader subtitle="Mock interview" />
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="max-w-2xl w-full">
+            <h1 className="text-3xl font-bold mb-3 tracking-tight">Mock interview</h1>
+            <p className="text-techy-muted mb-6">
+              This is a simulated SOC analyst interview. Set aside about 30 minutes of focused time.
+            </p>
 
-          <div className="bg-techy-surface border border-techy-border rounded-lg p-6 mb-6">
-            <h2 className="font-medium mb-3">What to expect</h2>
-            <ul className="space-y-2 text-sm text-techy-muted">
-              <li>• {questions.length} questions across categories — scenarios, conceptual, tools, behavioral</li>
-              <li>• <strong className="text-techy-text">No feedback between questions</strong> — that would break the simulation</li>
-              <li>• Expect pushback like a real interviewer</li>
-              <li>• Full report at the end with score, strengths, and gaps</li>
-              <li>• Answer like you would in a real interview — full thoughts, not one-liners</li>
-            </ul>
-          </div>
+            <div className="bg-techy-surface border border-techy-border rounded-lg p-6 mb-6">
+              <h2 className="font-medium mb-3">What to expect</h2>
+              <ul className="space-y-2 text-sm text-techy-muted">
+                <li>• {questions.length} questions across categories. Scenarios, conceptual, tools, behavioral</li>
+                <li>• <strong className="text-techy-text">No feedback between questions.</strong> That would break the simulation</li>
+                <li>• Expect pushback like a real interviewer</li>
+                <li>• Full report at the end with score, strengths, and gaps</li>
+                <li>• Answer like you would in a real interview. Full thoughts, not one-liners</li>
+              </ul>
+            </div>
 
-          <div className="flex gap-3">
-            <Link
-              href="/dashboard"
-              className="px-6 py-3 border border-techy-border rounded-md text-techy-muted hover:text-techy-text transition"
-            >
-              Not yet
-            </Link>
-            <button
-              onClick={beginInterview}
-              className="px-6 py-3 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
-            >
-              Begin interview
-            </button>
+            <div className="flex gap-3">
+              <Link
+                href="/dashboard"
+                className="px-6 py-3 border border-techy-border rounded-md text-techy-muted hover:text-techy-text transition"
+              >
+                Not yet
+              </Link>
+              <button
+                onClick={beginInterview}
+                className="px-6 py-3 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition"
+              >
+                Begin interview
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -129,26 +141,52 @@ export default function MockInterviewPage() {
 
   if (stage === "generating_report") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-xl mb-3">Generating your report...</div>
-          <div className="text-techy-muted text-sm">Takes about a minute.</div>
+      <div className="min-h-screen flex flex-col">
+        <PageHeader subtitle="Generating report" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-xl mb-3 tracking-tight">Generating your report...</div>
+            <div className="text-techy-muted text-sm">Takes about a minute.</div>
+          </div>
         </div>
       </div>
     );
   }
 
   if (stage === "report" && report) {
+    const score = report.final_score * 10; // convert /10 to /100 for gauge
+    const circumference = 2 * Math.PI * 52;
+    const offset = circumference - (score / 100) * circumference;
+    const gaugeColor =
+      score >= 75 ? "#34d399" : score >= 50 ? "#60a5fa" : score >= 25 ? "#fbbf24" : "#f87171";
+
     return (
       <div className="min-h-screen">
+        <PageHeader subtitle="Mock interview report" />
         <div className="max-w-3xl mx-auto px-6 py-12">
           <div className="text-center mb-12">
-            <div className="text-techy-muted text-sm mb-3">Mock interview complete</div>
-            <div className="text-6xl font-bold text-techy-accent mb-2">
-              {report.final_score}
-              <span className="text-2xl text-techy-muted">/10</span>
+            <div className="text-techy-muted text-sm mb-4">Mock interview complete</div>
+            <div className="relative w-40 h-40 mx-auto mb-4">
+              <svg viewBox="0 0 120 120" className="transform -rotate-90 w-full h-full">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#1f2937" strokeWidth="8" />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="52"
+                  fill="none"
+                  stroke={gaugeColor}
+                  strokeWidth="8"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={offset}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="text-4xl font-bold">{report.final_score}</div>
+                <div className="text-xs text-techy-muted">/ 10</div>
+              </div>
             </div>
-            <div className="text-xl mb-1">{report.final_verdict}</div>
+            <div className="text-xl mb-1 tracking-tight">{report.final_verdict}</div>
             <p className="text-techy-muted max-w-md mx-auto">{report.verdict_rationale}</p>
           </div>
 
@@ -193,7 +231,7 @@ export default function MockInterviewPage() {
           <div className="text-center">
             <Link
               href="/dashboard"
-              className="inline-block px-6 py-3 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
+              className="inline-block px-6 py-3 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition"
             >
               Back to dashboard
             </Link>
@@ -203,33 +241,35 @@ export default function MockInterviewPage() {
     );
   }
 
-  // Interview stage
   const current = questions[currentIndex];
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-techy-border">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex justify-between items-center text-sm">
-          <div className="text-techy-muted">Mock interview in progress</div>
-          <div className="text-techy-muted">
-            {currentIndex + 1} / {questions.length}
+      <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Link href="/"><Logo /></Link>
+          <div className="flex gap-6 items-center text-sm">
+            <div className="text-techy-muted uppercase text-xs tracking-wider">Mock interview</div>
+            <div className="text-techy-muted">
+              {currentIndex + 1} / {questions.length}
+            </div>
           </div>
         </div>
       </header>
 
       <div className="max-w-3xl mx-auto px-6 py-12 w-full flex-1">
-        <h1 className="text-xl font-medium mb-6 leading-relaxed">{current.question_text}</h1>
+        <h1 className="text-xl font-medium mb-6 leading-relaxed tracking-tight">{current.question_text}</h1>
         <textarea
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           placeholder="Take your time. Answer like you would in a real interview."
-          className="w-full min-h-[240px] p-4 bg-techy-surface border border-techy-border rounded-md focus:outline-none focus:border-techy-accent resize-y"
+          className="w-full min-h-[240px] p-4 bg-techy-surface border border-techy-border rounded-md focus:outline-none focus:border-techy-accent resize-y transition"
           autoFocus
         />
         <div className="flex justify-end mt-6">
           <button
             onClick={submitAndContinue}
             disabled={!answer.trim()}
-            className="px-6 py-2 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
+            className="px-6 py-2 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition disabled:opacity-50"
           >
             {currentIndex === questions.length - 1 ? "Finish interview" : "Next question"}
           </button>

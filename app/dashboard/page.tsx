@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { scoreLabel } from "@/lib/scoring";
+import Logo from "@/components/Logo";
 
 interface DashboardData {
   email: string;
@@ -100,7 +101,7 @@ export default function DashboardPage() {
     <div className="min-h-screen">
       <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-xl font-bold tracking-tight">Techy</div>
+          <Logo />
           <nav className="flex gap-6 items-center text-sm">
             <Link href="/dashboard" className="text-techy-text">Dashboard</Link>
             <Link href="/library" className="text-techy-muted hover:text-techy-text transition">Library</Link>

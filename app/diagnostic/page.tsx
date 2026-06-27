@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { buildDiagnosticSet, Question } from "@/lib/questions";
+import Logo from "@/components/Logo";
 
 interface Response {
   question_id: string;
@@ -47,16 +49,13 @@ export default function DiagnosticPage() {
     setResponses(updatedResponses);
 
     if (isLast) {
-      // Check auth — if not signed in after question 2, redirect to signup
       if (!isAuthed) {
-        // Save responses to sessionStorage so they can resume after signup
         sessionStorage.setItem("pending_diagnostic", JSON.stringify(updatedResponses));
         router.push("/auth/signup?from=diagnostic");
         return;
       }
       submitDiagnostic(updatedResponses);
     } else {
-      // Mid-diagnostic auth gate — after question 2, prompt signup
       if (currentIndex === 1 && !isAuthed) {
         sessionStorage.setItem("pending_diagnostic", JSON.stringify(updatedResponses));
         sessionStorage.setItem("diagnostic_resume_index", "2");
@@ -99,7 +98,7 @@ export default function DiagnosticPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-2xl mb-3">Analyzing your responses...</div>
+          <div className="text-2xl mb-3 tracking-tight">Analyzing your responses...</div>
           <div className="text-techy-muted">This takes about 30 seconds.</div>
         </div>
       </div>
@@ -108,7 +107,13 @@ export default function DiagnosticPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Progress bar */}
+      <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Link href="/"><Logo /></Link>
+          <div className="text-techy-muted uppercase text-xs tracking-wider">Diagnostic</div>
+        </div>
+      </header>
+
       <div className="h-1 bg-techy-border">
         <div
           className="h-full bg-techy-accent transition-all duration-300"
@@ -130,7 +135,7 @@ export default function DiagnosticPage() {
               {current.difficulty}
             </span>
           </div>
-          <h1 className="text-2xl font-medium mb-8 leading-relaxed">
+          <h1 className="text-2xl font-medium mb-8 leading-relaxed tracking-tight">
             {current.question_text}
           </h1>
 
@@ -138,7 +143,7 @@ export default function DiagnosticPage() {
             value={currentAnswer}
             onChange={(e) => setCurrentAnswer(e.target.value)}
             placeholder="Type your answer... (or click 'I don't know' if you'd rather skip)"
-            className="w-full min-h-[200px] p-4 bg-techy-surface border border-techy-border rounded-md focus:outline-none focus:border-techy-accent resize-y"
+            className="w-full min-h-[200px] p-4 bg-techy-surface border border-techy-border rounded-md focus:outline-none focus:border-techy-accent resize-y transition"
             autoFocus
           />
         </div>
@@ -157,7 +162,7 @@ export default function DiagnosticPage() {
           <button
             onClick={handleNext}
             disabled={!currentAnswer.trim()}
-            className="px-6 py-2 bg-techy-accent rounded-md text-white font-medium hover:opacity-90 transition"
+            className="px-6 py-2 bg-techy-accent hover:bg-techy-accentHover rounded-md text-white font-medium transition disabled:opacity-50"
           >
             {isLast ? "Submit" : "Next question"}
           </button>

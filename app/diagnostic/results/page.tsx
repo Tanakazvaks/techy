@@ -2,9 +2,11 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { interpretScore, scoreLabel } from "@/lib/scoring";
 import { TOPIC_NAMES } from "@/lib/questions";
+import Logo from "@/components/Logo";
 
 interface DiagnosticResult {
   overall_score: number;
@@ -53,16 +55,46 @@ function ResultsContent() {
   const breakdown = result.breakdown || {};
   const topics = Object.keys(breakdown);
 
+  // Gauge math for the overall score
+  const score = result.overall_score;
+  const circumference = 2 * Math.PI * 52;
+  const offset = circumference - (score / 100) * circumference;
+  const gaugeColor =
+    score >= 75 ? "#34d399" : score >= 50 ? "#60a5fa" : score >= 25 ? "#fbbf24" : "#f87171";
+
   return (
     <div className="min-h-screen">
+      <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Link href="/"><Logo /></Link>
+          <div className="text-techy-muted uppercase text-xs tracking-wider">Diagnostic results</div>
+        </div>
+      </header>
+
       <div className="max-w-3xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
-          <div className="text-techy-muted text-sm mb-3">Your readiness score</div>
-          <div className="text-7xl font-bold text-techy-accent mb-2">
-            {result.overall_score}
-            <span className="text-2xl text-techy-muted">/100</span>
+          <div className="text-techy-muted text-sm mb-4">Your readiness score</div>
+          <div className="relative w-40 h-40 mx-auto mb-4">
+            <svg viewBox="0 0 120 120" className="transform -rotate-90 w-full h-full">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#1f2937" strokeWidth="8" />
+              <circle
+                cx="60"
+                cy="60"
+                r="52"
+                fill="none"
+                stroke={gaugeColor}
+                strokeWidth="8"
+                strokeDasharray={circumference}
+                strokeDashoffset={offset}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="text-4xl font-bold">{result.overall_score}</div>
+              <div className="text-xs text-techy-muted">/ 100</div>
+            </div>
           </div>
-          <div className="text-xl text-techy-text mb-1">{scoreLabel(result.overall_score)}</div>
+          <div className="text-xl text-techy-text mb-1 tracking-tight">{scoreLabel(result.overall_score)}</div>
           <p className="text-techy-muted max-w-md mx-auto">
             {interpretScore(result.overall_score)}
           </p>
@@ -79,7 +111,7 @@ function ResultsContent() {
                 </div>
                 <div className="h-2 bg-techy-bg rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-techy-accent rounded-full"
+                    className="h-full bg-techy-accent rounded-full transition-all duration-500"
                     style={{ width: `${breakdown[topic]}%` }}
                   />
                 </div>
@@ -105,7 +137,7 @@ function ResultsContent() {
         <div className="text-center mt-10">
           <button
             onClick={() => router.push("/dashboard")}
-            className="px-8 py-3 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
+            className="px-8 py-3 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition"
           >
             Go to your dashboard
           </button>

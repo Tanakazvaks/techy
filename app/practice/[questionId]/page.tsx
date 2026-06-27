@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { getQuestion, Question, TOPIC_NAMES } from "@/lib/questions";
+import Logo from "@/components/Logo";
 
 type Stage = "question" | "evaluating" | "feedback";
 
@@ -109,11 +110,14 @@ export default function PracticePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex justify-between items-center text-sm">
-          <Link href="/library" className="text-techy-muted hover:text-techy-text transition">
-            ← Back to library
-          </Link>
-          <div className="text-techy-muted uppercase text-xs tracking-wider">Practice mode</div>
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Logo />
+          <div className="flex gap-6 items-center text-sm">
+            <Link href="/library" className="text-techy-muted hover:text-techy-text transition">
+              ← Back to library
+            </Link>
+            <div className="text-techy-muted uppercase text-xs tracking-wider">Practice mode</div>
+          </div>
         </div>
       </header>
 

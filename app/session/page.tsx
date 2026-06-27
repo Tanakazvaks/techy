@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { buildSessionSet, Question, TOPIC_NAMES } from "@/lib/questions";
+import Logo from "@/components/Logo";
 
 type Stage = "question" | "evaluating" | "feedback" | "done";
 
@@ -13,6 +14,35 @@ interface AttemptResult {
   verdict: string;
   feedback: string;
 }
+
+// Topic pill styling
+const TOPIC_STYLES: Record<string, string> = {
+  networking: "bg-topic-networking text-topic-networkingText",
+  common_attacks: "bg-topic-common_attacks text-topic-common_attacksText",
+  log_analysis: "bg-topic-log_analysis text-topic-log_analysisText",
+  incident_response: "bg-topic-incident_response text-topic-incident_responseText",
+  endpoint_security: "bg-topic-endpoint_security text-topic-endpoint_securityText",
+  web_security: "bg-topic-web_security text-topic-web_securityText",
+  cloud_security: "bg-topic-cloud_security text-topic-cloud_securityText",
+  threat_intel: "bg-topic-threat_intel text-topic-threat_intelText",
+  splunk: "bg-topic-splunk text-topic-splunkText",
+  behavioral: "bg-topic-behavioral text-topic-behavioralText",
+  vulnerabilities: "bg-topic-vulnerabilities text-topic-vulnerabilitiesText",
+};
+
+const DIFFICULTY_STYLES: Record<string, string> = {
+  Easy: "bg-difficulty-easyBg text-difficulty-easyText border-difficulty-easyBorder",
+  Medium: "bg-difficulty-mediumBg text-difficulty-mediumText border-difficulty-mediumBorder",
+  Hard: "bg-difficulty-hardBg text-difficulty-hardText border-difficulty-hardBorder",
+};
+
+const VERDICT_STYLES: Record<string, string> = {
+  Strong: "bg-verdict-strongBg text-verdict-strongText",
+  Solid: "bg-verdict-solidBg text-verdict-solidText",
+  Partial: "bg-verdict-partialBg text-verdict-partialText",
+  Weak: "bg-verdict-weakBg text-verdict-weakText",
+  "Off-track": "bg-verdict-weakBg text-verdict-weakText",
+};
 
 export default function SessionPage() {
   const router = useRouter();
@@ -38,7 +68,6 @@ export default function SessionPage() {
       return;
     }
 
-    // Get user's weak areas from last diagnostic
     const { data: diagnostic } = await supabase
       .from("diagnostics")
       .select("weak_areas")
@@ -55,7 +84,6 @@ export default function SessionPage() {
     const sessionQuestions = buildSessionSet(topics, 3);
     setQuestions(sessionQuestions);
 
-    // Create session row
     const { data: session } = await supabase
       .from("sessions")
       .insert({
@@ -102,12 +130,10 @@ export default function SessionPage() {
   async function flagFeedback() {
     if (feedbackFlagged || !sessionId) return;
     setFeedbackFlagged(true);
-    // In production, you'd call an API to log this. For MVP, we just acknowledge.
   }
 
   async function nextQuestion() {
     if (isLast) {
-      // Mark session complete
       const supabase = createClient();
       const correct = attempts.filter((a) => a.verdict === "Strong" || a.verdict === "Solid").length;
       await supabase
@@ -140,25 +166,33 @@ export default function SessionPage() {
   if (stage === "done") {
     const correct = attempts.filter((a) => a.verdict === "Strong" || a.verdict === "Solid").length;
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-lg w-full text-center">
-          <div className="text-techy-muted text-sm mb-3">Session complete</div>
-          <div className="text-3xl font-bold mb-4">Nice work</div>
-          <div className="bg-techy-surface border border-techy-border rounded-lg p-6 mb-6">
-            <div className="text-techy-muted text-sm mb-1">You answered</div>
-            <div className="text-2xl font-bold mb-3">
-              {correct} of {questions.length} strongly
-            </div>
-            <div className="text-techy-muted text-sm">
-              Questions you missed will resurface in your next session via spaced repetition.
-            </div>
+      <div className="min-h-screen flex flex-col">
+        <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <Link href="/"><Logo /></Link>
+            <div className="text-techy-muted uppercase text-xs tracking-wider">Session complete</div>
           </div>
-          <Link
-            href="/dashboard"
-            className="inline-block px-6 py-3 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
-          >
-            Back to dashboard
-          </Link>
+        </header>
+        <div className="flex-1 flex items-center justify-center px-6">
+          <div className="max-w-lg w-full text-center">
+            <div className="text-techy-muted text-sm mb-3">Session complete</div>
+            <div className="text-3xl font-bold mb-4 tracking-tight">Nice work</div>
+            <div className="bg-techy-surface border border-techy-border rounded-lg p-6 mb-6">
+              <div className="text-techy-muted text-sm mb-1">You answered</div>
+              <div className="text-2xl font-bold mb-3">
+                {correct} of {questions.length} strongly
+              </div>
+              <div className="text-techy-muted text-sm">
+                Questions you missed will resurface in your next session via spaced repetition.
+              </div>
+            </div>
+            <Link
+              href="/dashboard"
+              className="inline-block px-6 py-3 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition"
+            >
+              Back to dashboard
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -166,30 +200,33 @@ export default function SessionPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-techy-border">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex justify-between items-center text-sm">
-          <Link href="/dashboard" className="text-techy-muted hover:text-techy-text">
-            ← Exit session
-          </Link>
-          <div className="text-techy-muted">
-            Question {currentIndex + 1} of {questions.length}
+      <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Link href="/"><Logo /></Link>
+          <div className="flex gap-6 items-center text-sm">
+            <Link href="/dashboard" className="text-techy-muted hover:text-techy-text transition">
+              ← Exit session
+            </Link>
+            <div className="text-techy-muted">
+              Question {currentIndex + 1} of {questions.length}
+            </div>
           </div>
         </div>
       </header>
 
       <div className="max-w-3xl mx-auto px-6 py-8 w-full flex-1">
-        <div className="mb-3 flex gap-2 items-center">
-          <span className="text-xs bg-techy-surface border border-techy-border rounded-full px-3 py-1">
-            {current.category}
-          </span>
-          <span className="text-xs bg-techy-surface border border-techy-border rounded-full px-3 py-1">
-            {current.difficulty}
-          </span>
-          <span className="text-xs text-techy-muted">
+        <div className="mb-4 flex gap-2 items-center flex-wrap">
+          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${TOPIC_STYLES[current.topic] || "bg-techy-bg text-techy-muted"}`}>
             {TOPIC_NAMES[current.topic] || current.topic}
           </span>
+          <span className={`inline-block px-2 py-1 rounded text-xs font-medium border ${DIFFICULTY_STYLES[current.difficulty] || ""}`}>
+            {current.difficulty}
+          </span>
+          <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-techy-surface border border-techy-border text-techy-muted">
+            {current.category}
+          </span>
         </div>
-        <h1 className="text-2xl font-medium mb-8 leading-relaxed">{current.question_text}</h1>
+        <h1 className="text-2xl font-medium mb-8 leading-relaxed tracking-tight">{current.question_text}</h1>
 
         {stage === "question" && (
           <>
@@ -197,14 +234,14 @@ export default function SessionPage() {
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               placeholder="Type your answer..."
-              className="w-full min-h-[200px] p-4 bg-techy-surface border border-techy-border rounded-md focus:outline-none focus:border-techy-accent resize-y"
+              className="w-full min-h-[200px] p-4 bg-techy-surface border border-techy-border rounded-md focus:outline-none focus:border-techy-accent resize-y transition"
               autoFocus
             />
             <div className="flex justify-end mt-6">
               <button
                 onClick={submitAnswer}
                 disabled={!answer.trim()}
-                className="px-6 py-2 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
+                className="px-6 py-2 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition disabled:opacity-50"
               >
                 Submit answer
               </button>
@@ -220,6 +257,15 @@ export default function SessionPage() {
 
         {stage === "feedback" && (
           <>
+            {verdict && (
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-techy-muted text-sm">Verdict:</span>
+                <span className={`inline-block px-3 py-1 rounded text-sm font-semibold ${VERDICT_STYLES[verdict] || "bg-techy-surface text-techy-text"}`}>
+                  {verdict}
+                </span>
+              </div>
+            )}
+
             <div className="bg-techy-surface border border-techy-border rounded-md p-6 mb-4">
               <div className="text-sm text-techy-muted mb-1">Your answer</div>
               <p className="text-techy-muted italic">{answer}</p>
@@ -246,7 +292,7 @@ export default function SessionPage() {
               </div>
               <button
                 onClick={nextQuestion}
-                className="px-6 py-2 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
+                className="px-6 py-2 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition"
               >
                 {isLast ? "Finish session" : "Next question"}
               </button>
@@ -258,7 +304,6 @@ export default function SessionPage() {
   );
 }
 
-// Minimal markdown-to-HTML for feedback display
 function markdownToHtml(md: string): string {
   return md
     .replace(/&/g, "&amp;")

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
+import Logo from "@/components/Logo";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -63,8 +64,6 @@ export default function SettingsPage() {
     if (!confirm("Really sure? This cannot be undone.")) return;
 
     const supabase = createClient();
-    // Note: in production you'd want a server-side delete that uses the service role key.
-    // This client-side call deletes the user's profile and cascades to all related rows.
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -83,19 +82,19 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-techy-border">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-xl font-bold">Techy</div>
+      <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Logo />
           <nav className="flex gap-6 text-sm">
-            <Link href="/dashboard" className="text-techy-muted hover:text-techy-text">Dashboard</Link>
-            <Link href="/library" className="text-techy-muted hover:text-techy-text">Library</Link>
+            <Link href="/dashboard" className="text-techy-muted hover:text-techy-text transition">Dashboard</Link>
+            <Link href="/library" className="text-techy-muted hover:text-techy-text transition">Library</Link>
             <Link href="/settings" className="text-techy-text">Settings</Link>
           </nav>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold mb-6">Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-6">Settings</h1>
 
         <div className="bg-techy-surface border border-techy-border rounded-lg p-6 mb-6">
           <h2 className="font-medium mb-4">Account</h2>
@@ -114,7 +113,7 @@ export default function SettingsPage() {
                 type="date"
                 value={interviewDate}
                 onChange={(e) => setInterviewDate(e.target.value)}
-                className="w-full px-3 py-2 bg-techy-bg border border-techy-border rounded-md focus:outline-none focus:border-techy-accent"
+                className="w-full px-3 py-2 bg-techy-bg border border-techy-border rounded-md focus:outline-none focus:border-techy-accent transition"
               />
             </div>
             <div>
@@ -122,7 +121,7 @@ export default function SettingsPage() {
               <select
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
-                className="w-full px-3 py-2 bg-techy-bg border border-techy-border rounded-md focus:outline-none focus:border-techy-accent"
+                className="w-full px-3 py-2 bg-techy-bg border border-techy-border rounded-md focus:outline-none focus:border-techy-accent transition"
               >
                 <option value="tier1">Tier 1 SOC Analyst</option>
                 <option value="tier2">Tier 2 SOC Analyst</option>
@@ -136,7 +135,7 @@ export default function SettingsPage() {
                 value={targetCompany}
                 onChange={(e) => setTargetCompany(e.target.value)}
                 placeholder="e.g., CrowdStrike"
-                className="w-full px-3 py-2 bg-techy-bg border border-techy-border rounded-md focus:outline-none focus:border-techy-accent"
+                className="w-full px-3 py-2 bg-techy-bg border border-techy-border rounded-md focus:outline-none focus:border-techy-accent transition"
               />
             </div>
 
@@ -144,7 +143,7 @@ export default function SettingsPage() {
               <button
                 onClick={save}
                 disabled={saving}
-                className="px-4 py-2 bg-techy-accent text-white font-medium rounded-md hover:opacity-90 transition"
+                className="px-4 py-2 bg-techy-accent hover:bg-techy-accentHover text-white font-medium rounded-md transition disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save changes"}
               </button>

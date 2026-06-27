@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ALL_QUESTIONS, TOPIC_NAMES } from "@/lib/questions";
+import Logo from "@/components/Logo";
 
 // Difficulty pill styling
 const DIFFICULTY_STYLES: Record<string, string> = {
@@ -46,7 +47,7 @@ export default function LibraryPage() {
     <div className="min-h-screen">
       <header className="border-b border-techy-border bg-techy-surface/40 backdrop-blur">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-xl font-bold tracking-tight">Techy</div>
+          <Logo />
           <nav className="flex gap-6 text-sm">
             <Link href="/dashboard" className="text-techy-muted hover:text-techy-text transition">Dashboard</Link>
             <Link href="/library" className="text-techy-text">Library</Link>
