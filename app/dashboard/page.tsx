@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase-client";
 import { scoreLabel } from "@/lib/scoring";
 import Logo from "@/components/Logo";
+import FeatureInterestModal from "@/components/FeatureInterestModal";
 
 interface DashboardData {
   email: string;
@@ -20,6 +21,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -88,12 +90,9 @@ export default function DashboardPage() {
       )
     : null;
 
-  // Circular gauge math
   const score = data.readinessScore ?? 0;
   const circumference = 2 * Math.PI * 52;
   const offset = circumference - (score / 100) * circumference;
-
-  // Gauge color based on score band
   const gaugeColor =
     score >= 75 ? "#34d399" : score >= 50 ? "#60a5fa" : score >= 25 ? "#fbbf24" : "#f87171";
 
@@ -139,18 +138,10 @@ export default function DashboardPage() {
 
         {/* Hero row: gauge + today's session */}
         <div className="grid md:grid-cols-3 gap-4 mb-6">
-          {/* Readiness gauge */}
           <div className="bg-techy-surface border border-techy-border rounded-lg p-6 flex flex-col items-center justify-center">
             <div className="relative w-32 h-32 mb-3">
               <svg viewBox="0 0 120 120" className="transform -rotate-90 w-full h-full">
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="52"
-                  fill="none"
-                  stroke="#1f2937"
-                  strokeWidth="8"
-                />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#1f2937" strokeWidth="8" />
                 <circle
                   cx="60"
                   cy="60"
@@ -177,7 +168,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Today's session (spans 2 cols) */}
           <div className="md:col-span-2 bg-gradient-to-br from-techy-accent/15 via-techy-surface to-techy-surface border border-techy-accent/30 rounded-lg p-6 shadow-glow">
             <div className="text-techy-accent text-xs uppercase tracking-wider mb-2 font-medium">Today&apos;s session</div>
             <div className="text-2xl font-bold mb-2 tracking-tight">
@@ -224,8 +214,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Secondary actions */}
-        <div className="grid md:grid-cols-2 gap-4">
+        {/* Secondary actions — now with 3 cards */}
+        <div className="grid md:grid-cols-3 gap-4">
           <Link
             href="/library"
             className="group bg-techy-surface border border-techy-border rounded-lg p-5 hover:border-techy-accent hover:bg-techy-surfaceHover transition"
@@ -238,6 +228,7 @@ export default function DashboardPage() {
               Practice on your own. Pick by topic or difficulty.
             </div>
           </Link>
+
           <Link
             href={mockUnlocked ? "/mock" : "#"}
             className={`group bg-techy-surface border border-techy-border rounded-lg p-5 transition ${
@@ -261,8 +252,33 @@ export default function DashboardPage() {
                   } to unlock.`}
             </div>
           </Link>
+
+          <button
+            onClick={() => setShowVoiceModal(true)}
+            className="group bg-techy-surface border border-techy-border rounded-lg p-5 hover:border-techy-accent hover:bg-techy-surfaceHover transition text-left relative overflow-hidden"
+          >
+            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-techy-accent/15 text-techy-accentHover text-xs font-medium uppercase tracking-wider">
+              Soon
+            </div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="text-xl">🎙️</div>
+              <div className="font-medium group-hover:text-techy-accentHover transition">Voice mock interview</div>
+            </div>
+            <div className="text-techy-muted text-sm">
+              Speak your answers. Get feedback on verbal habits, not just content.
+            </div>
+          </button>
         </div>
       </main>
+
+      {showVoiceModal && (
+        <FeatureInterestModal
+          featureName="voice_mock_interview"
+          title="Voice mock interviews"
+          description="Practice mock interviews by speaking your answers, just like the real thing. Get AI feedback on your verbal habits like filler words, pacing, and hedging, alongside content feedback."
+          onClose={() => setShowVoiceModal(false)}
+        />
+      )}
     </div>
   );
 }
