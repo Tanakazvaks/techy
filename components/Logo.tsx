@@ -1,6 +1,23 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase-client";
+
 export default function Logo() {
+  const [href, setHref] = useState("/");
+
+  useEffect(() => {
+    async function checkAuth() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setHref(user ? "/dashboard" : "/");
+    }
+    checkAuth();
+  }, []);
+
   return (
-    <div className="flex items-center gap-2">
+    <Link href={href} className="flex items-center gap-2 hover:opacity-80 transition">
       <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -23,6 +40,6 @@ export default function Logo() {
         />
       </svg>
       <span className="text-xl font-bold tracking-tight">Techy</span>
-    </div>
+    </Link>
   );
 }
